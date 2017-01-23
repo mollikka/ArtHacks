@@ -22,14 +22,13 @@ if __name__ == "__main__":
         return phase
 
     create("kuukuosi1_3840x2160_left.svg",       3840,2160,64,5,angle_function1,phase_function1,
-            skip_top_rows=1, i_offset=-64)
-    create("kuukuosi1_3840x2160_center.svg",       3840,2160,64,5,angle_function1,phase_function1,
             skip_top_rows=1, i_offset=0)
-    create("kuukuosi1_3840x2160_right.svg",       3840,2160,64,5,angle_function1,phase_function1,
+    create("kuukuosi1_3840x2160_center.svg",       3840,2160,64,5,angle_function1,phase_function1,
             skip_top_rows=1, i_offset=64)
-    create("kuukuosi1_1366x768.svg",        1366,768, 50,2,angle_function1,phase_function1,
-            skip_top_rows=1)
-
+    create("kuukuosi1_3840x2160_right.svg",       3840,2160,64,5,angle_function1,phase_function1,
+            skip_top_rows=1, i_offset=128)
+    create("kuukuosi1_15360x2160.svg",      15360,2160,256,5,angle_function1,phase_function1,
+            skip_top_rows=1, i_offset=-32)
 
     def angle_function2(i,j,h_repeat,v_repeat):
         return 0
