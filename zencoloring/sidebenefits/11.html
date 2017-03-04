@@ -1,0 +1,27 @@
+<html>
+  <head>
+    <script src="../base.js"></script>
+  </head>
+  <body>
+    <svg width="1000" height="1000" id="svg_target">
+    </svg>
+
+    <script>
+      var svgDocument = document.getElementById("svg_target");
+      
+
+      for (var j=0; j<20; j++) {
+        var f_x = function(i){return 500+i*Math.sin(j-i/20)};
+        var f_y = function(i){return 500+i*Math.cos(j-i/20)};
+        var f_w = function(i){return Math.max(2,5 + 4*Math.sin(j+i))}
+        circles_parameterized(svgDocument, f_x, f_y, f_w,1,500,"black")
+      }
+      for (var j=0; j<20; j++) {
+        var f_x = function(i){return 500+i*Math.sin(j-i/20)};
+        var f_y = function(i){return 300+i*Math.cos(j-i/20)};
+        var f_w = function(i){return Math.max(2,5 + 4*Math.sin(j+i))}
+        circles_parameterized(svgDocument, f_x, f_y, f_w,1,500,"white")
+      }
+    </script>
+  </body>
+</html>

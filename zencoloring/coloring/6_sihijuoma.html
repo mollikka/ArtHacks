@@ -1,0 +1,59 @@
+<html>
+  <head>
+    <script src="../base.js"></script>
+    <script src="../math.js"></script>
+  </head>
+  <body>
+    <svg width="100%" height="100%" id="svg_target">
+    </svg>
+
+    <script>
+      var svgDocument = document.getElementById("svg_target");
+
+      for (var j=1; j<40; j++) {
+        var dir = function(i){return Math.atan2(j+20,i-5)};
+        var f_x = function(i){return i*25 + 20*Math.sin(20*dir(i))};
+        var f_y = function(i){return j*25 + 20*Math.cos(20*dir(i))};
+        var f_w = function(i) {return 1};
+        var f_r = function(i) {return 2*Math.abs(2*Math.PI-dir(40*i))};
+        
+        fancypath_parameterized(svgDocument,f_x,f_y,f_w,1,39,"black");
+      }
+      for (var i=1; i<40; i++) {
+        var dir = function(j){return Math.atan2(j+20,i-5)};
+        var f_x = function(j){return i*25 + 20*Math.sin(20*dir(j))};
+        var f_y = function(j){return j*25 + 20*Math.cos(20*dir(j))};
+        var f_w = function (j) {return 1};
+
+        fancypath_parameterized(svgDocument,f_x,f_y,f_w,1,39,"black");
+      }
+      for (var j=1; j<40; j++) {
+        var dir2 = function(i){return Math.atan2(j-10,i-10)};
+        var dir = function(i){return Math.atan2(j+20,i-5)};
+        var f_x = function(i){return i*25 + 20*Math.sin(20*dir(i))};
+        var f_y = function(i){return j*25 + 20*Math.cos(20*dir(i))};
+      
+        var f_r = function(i) {return rest_friction(15*Math.cos(i+j),5)};
+        
+
+        circles_parameterized(svgDocument,f_x,f_y,f_r,1,39,"black");
+      }
+      for (var j=1; j<40; j++) {
+        var dir = function(i){return Math.atan2(j+20,i-5)};
+        var f_x = function(i){return i*25 + 20*Math.sin(20*dir(i))};
+        var f_y = function(i){return j*25 + 20*Math.cos(20*dir(i))};
+      
+        var f_r = function(i) {return rest_friction(15*Math.cos(i+j),5)-1};
+        
+
+        circles_parameterized(svgDocument,f_x,f_y,f_r,1,39,"white");
+      }
+
+
+
+
+
+
+    </script>
+  </body>
+</html>

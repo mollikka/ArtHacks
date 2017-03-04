@@ -1,0 +1,31 @@
+<html>
+  <head>
+    <script src="../base.js"></script>
+  </head>
+  <body>
+    <svg width="100%" height="100%" id="svg_target">
+    </svg>
+
+    <script>
+      var svgDocument = document.getElementById("svg_target");
+
+      function spiralgraph(R,r,d) {
+        var f_x = function(i){return 200+(R-r)*Math.cos(i/180*Math.PI) + d*Math.cos((R-r)/r*(i/180*Math.PI))};
+        var f_y = function(i){return 200+(R-r)*Math.sin(i/180*Math.PI) - d*Math.sin((R-r)/r*(i/180*Math.PI))};
+        
+        var f_w = function(i){return 8};
+        var f_w2 = function(i){return 7};
+
+        fancypath_parameterized(svgDocument,f_x,f_y,f_w,1,360*20,"black");     
+        fancypath_parameterized(svgDocument,f_x,f_y,f_w2,1,360*20,"white");     
+      }
+      spiralgraph(210,170,170);
+      spiralgraph(210,170,145);
+      //spiralgraph(210,170,120);
+      spiralgraph(210,170,120);
+      spiralgraph(210,170,95);
+      spiralgraph(210,170,70);
+
+    </script>
+  </body>
+</html>

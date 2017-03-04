@@ -1,0 +1,36 @@
+<html>
+  <head>
+    <script src="../base.js"></script>
+  </head>
+  <body>
+    <svg width="100%" height="100%" id="svg_target">
+    </svg>
+
+    <script>
+      var svgDocument = document.getElementById("svg_target");
+
+      var f_x1 = function(i){return i*20};
+      var f_y1 = function(i){return 250};
+      
+
+     
+      var f_x2 = function(i) {return 100+50*Math.sin(i/18*Math.PI)}
+      var f_y2 = function(i) {return 100+50*Math.cos(i/18*Math.PI)}
+
+      var f_x = function(i){return f_x1(i)*k/10 + f_x2(i)*(1-k/10)}
+      var f_y = function(i){return f_y1(i)*k/10 + f_y2(i)*(1-k/10)}    
+
+     
+      for (var k=-40; k<40; k++) {   
+        var f_w = function(i){return 8};
+        var f_r = function(i){return 4};
+        //circles_paraeterized(svgDocument,f_x,f_y,f_r,1,360,"black");     
+        fancypath_parameterized(svgDocument,f_x,f_y,f_w,-360,360,"black");     
+        var f_w = function(i){return 7};
+        var f_r = function(i){return 3.5};
+        //circles_parameterized(svgDocument,f_x,f_y,f_r,1,360,"white");     
+        fancypath_parameterized(svgDocument,f_x,f_y,f_w,-360,360,"white");     
+      }
+    </script>
+  </body>
+</html>
