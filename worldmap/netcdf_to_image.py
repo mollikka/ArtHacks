@@ -13,8 +13,15 @@ ELEVATION_MAX = 8000
 
 ELEVATION_RANGE = ELEVATION_MAX - ELEVATION_MIN
 
+Y_MIN = -90
+Y_MAX = 90
 
+Y_RANGE = Y_MAX - Y_MIN
 
+X_MIN = -180 * 3/2 * sqrt(1/3)
+X_MAX = 180 * 3/2 * sqrt(1/3)
+
+X_RANGE = X_MAX - X_MIN
 
 def get_elevation(lat, lon):
     lat_data = round((lat+90)/180*DATA_LAT_RESOLUTION)
@@ -38,6 +45,29 @@ def cylindrical(x, y):
     lon = x
     return lat, lon
 
+
+def picture_coordinates_to_elevation(x_resolution, y_resolution, real_x, real_y):
+
+    try:
+        lat,lon = picture_coordinates_to_earth_coordinates(
+                x_resolution, y_resolution, real_x, real_y)
+        elev = get_elevation(lat,lon)
+    except ValueError:
+        elev = ELEVATION_MIN
+    return elev
+
+def picture_coordinates_to_earth_coordinates(x_resolution, y_resolution, real_x, real_y):
+
+    #warning: can throw ValueError if outside the projection
+
+    #picture coordinates to model coordinates
+    i = X_MIN + real_x/(x_resolution-1)*X_RANGE
+    j = Y_MIN + real_y/(y_resolution-1)*Y_RANGE
+    #model pixel to earth coordinates
+    lat,lon = kavrayskiy_VII(i,j)
+    return lat,lon
+
+
 def pixel_chunk_mode(x_resolution_per_chunk, y_resolution_per_chunk,
                         x_chunk_count, y_chunk_count):
 
@@ -47,16 +77,6 @@ def pixel_chunk_mode(x_resolution_per_chunk, y_resolution_per_chunk,
     PICTURE_Y_CHUNKS = y_chunk_count
     PICTURE_X_RESOLUTION = x_chunk_count * x_resolution_per_chunk
     PICTURE_Y_RESOLUTION = y_chunk_count * y_resolution_per_chunk
-
-    Y_MIN = -90
-    Y_MAX = 90
-
-    Y_RANGE = Y_MAX - Y_MIN
-
-    X_MIN = -180 * 3/2 * sqrt(1/3)
-    X_MAX = 180 * 3/2 * sqrt(1/3)
-
-    X_RANGE = X_MAX - X_MIN
 
     for chunk_x in range(PICTURE_X_CHUNKS):
         for chunk_y in range(PICTURE_Y_CHUNKS):
@@ -72,21 +92,11 @@ def pixel_chunk_mode(x_resolution_per_chunk, y_resolution_per_chunk,
                     real_x = chunk_x*PICTURE_X_RESOLUTION_PER_CHUNK + x
                     real_y = chunk_y*PICTURE_Y_RESOLUTION_PER_CHUNK + y
 
-                    #picture coordinates to model coordinates
-                    i = X_MIN + real_x/(PICTURE_X_RESOLUTION-1)*X_RANGE
-                    j = Y_MIN + real_y/(PICTURE_Y_RESOLUTION-1)*Y_RANGE
-                    try:
-                        #model pixel to earth coordinates
-                        lat,lon = kavrayskiy_VII(i,j)
-                        #lat,lon = cylindrical(i,j)
-                        #earth coordinates to elevation
-                        elev = get_elevation(lat,lon)
-                    except ValueError:
-                        elev = ELEVATION_MIN
+                    elev = picture_coordinates_to_elevation(PICTURE_X_RESOLUTION, PICTURE_Y_RESOLUTION, real_x, real_y)
+
                     #elevation to picture color value
                     elev_color = int((elev - ELEVATION_MIN)/ELEVATION_RANGE*255)
                     #draw it
-                    #print("picture {:3d},{:3d}\tcoordinates {: 4.3f},{: 4.3f}\televation {:5d}\telev color {:3d}".format(x,y,lat,lon,elev,elev_color))
                     draw.point((x,y), (elev_color, elev_color, elev_color))
             map_image.save("map_{}_{}.png".format(chunk_x, chunk_y))
 
