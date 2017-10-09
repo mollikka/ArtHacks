@@ -103,14 +103,8 @@ def pixel_chunk_mode(x_resolution_per_chunk, y_resolution_per_chunk,
 def angle_chunk_mode(x_resolution, y_resolution,
         latitude_chunk_count, longitude_chunk_count):
 
-    def chunk_index(lat,lon):
-        return longitude_chunk_count*lat + lon
-
     PICTURE_X_RESOLUTION = x_resolution
     PICTURE_Y_RESOLUTION = y_resolution
-
-    chunk_image = [None]*latitude_chunk_count*longitude_chunk_count
-    chunk_draw = [None]*latitude_chunk_count*longitude_chunk_count
 
     LATITUDE_PER_CHUNK = 180/latitude_chunk_count
     LONGITUDE_PER_CHUNK = 360/longitude_chunk_count
@@ -120,20 +114,17 @@ def angle_chunk_mode(x_resolution, y_resolution,
 
     for chunk_lat in range(latitude_chunk_count):
         for chunk_lon in range(longitude_chunk_count):
-            image = Image.new("RGB", (PICTURE_X_RESOLUTION, PICTURE_Y_RESOLUTION))
-            draw = ImageDraw.Draw(image)
-            chunk_image[chunk_index(chunk_lat, chunk_lon)] = image
-            chunk_draw[chunk_index(chunk_lat, chunk_lon)] = draw
 
+            print("Rendering chunk {},{}".format(chunk_lat, chunk_lon))
 
-    for x in range(PICTURE_X_RESOLUTION):
-        for y in range(PICTURE_Y_RESOLUTION):
+            chunk_image = Image.new("RGB", (PICTURE_X_RESOLUTION, PICTURE_Y_RESOLUTION))
+            chunk_draw = ImageDraw.Draw(chunk_image)
 
-            lat,lon = picture_coordinates_to_earth_coordinates(
-                    PICTURE_X_RESOLUTION, PICTURE_Y_RESOLUTION, x, y)
+            for x in range(PICTURE_X_RESOLUTION):
+                for y in range(PICTURE_Y_RESOLUTION):
 
-            for chunk_lat in range(latitude_chunk_count):
-                for chunk_lon in range(longitude_chunk_count):
+                    lat,lon = picture_coordinates_to_earth_coordinates(
+                            PICTURE_X_RESOLUTION, PICTURE_Y_RESOLUTION, x, y)
 
                     chunk_min_lat = chunk_lat*LATITUDE_PER_CHUNK + MIN_LATITUDE
                     chunk_max_lat = (chunk_lat+1)*LATITUDE_PER_CHUNK + MIN_LATITUDE
@@ -148,16 +139,12 @@ def angle_chunk_mode(x_resolution, y_resolution,
 
                     elev = get_elevation(lat,lon)
 
-                    draw = chunk_draw[chunk_index(chunk_lat, chunk_lon)]
-
                     #elevation to picture color value
                     elev_color = int((elev - ELEVATION_MIN)/ELEVATION_RANGE*255)
                     #draw it
-                    draw.point((x,y), (elev_color, elev_color, elev_color))
+                    chunk_draw.point((x,y), (elev_color, elev_color, elev_color))
 
-    for chunk_lat in range(latitude_chunk_count):
-        for chunk_lon in range(longitude_chunk_count):
-            chunk_image[chunk_index(chunk_lat, chunk_lon)].save("map_{}_{}.png".format(chunk_lat, chunk_lon))
+            chunk_image.save("map_{}_{}.png".format(chunk_lat, chunk_lon))
 
 if __name__ == "__main__":
 
