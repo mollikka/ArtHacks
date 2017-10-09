@@ -129,8 +129,8 @@ PVector path(float t, int p) {
   for (int j=0; j<recursive_levels; j++) {
     int K = int(j == 0);
     float recursive_P = p/recursive_pathsInside[j]%recursive_pathcounts[j];
-    x += recursive_circleRs[j]*sin(I/framecount*2*PI*K + recursive_circleSpeeds[j]*2*PI*t + recursive_P/recursive_pathcounts[j]*2*PI);
-    y += recursive_circleRs[j]*cos(I/framecount*2*PI*K + recursive_circleSpeeds[j]*2*PI*t + recursive_P/recursive_pathcounts[j]*2*PI);
+    x += recursive_circleRs[j]*sin(-I/framecount*2*PI*K - recursive_circleSpeeds[j]*2*PI*t + recursive_P/recursive_pathcounts[j]*2*PI);
+    y += recursive_circleRs[j]*cos(-I/framecount*2*PI*K - recursive_circleSpeeds[j]*2*PI*t + recursive_P/recursive_pathcounts[j]*2*PI);
   }
 
   return new PVector(x, z_speed*t, y);
