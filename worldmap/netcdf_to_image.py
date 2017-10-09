@@ -8,29 +8,13 @@ f = Dataset("GEBCO_2014_2D.nc","r")
 DATA_LAT_RESOLUTION = len(f.variables['lat'])
 DATA_LON_RESOLUTION = len(f.variables['lon'])
 
-PICTURE_X_RESOLUTION = 400
-PICTURE_Y_RESOLUTION = 200
-
-PICTURE_X_CHUNKS = 1
-PICTURE_Y_CHUNKS = 1
-
-PICTURE_X_RESOLUTION_PER_CHUNK = int(PICTURE_X_RESOLUTION / PICTURE_X_CHUNKS)
-PICTURE_Y_RESOLUTION_PER_CHUNK = int(PICTURE_Y_RESOLUTION / PICTURE_Y_CHUNKS)
-
-Y_MIN = -90
-Y_MAX = 90
-
-Y_RANGE = Y_MAX - Y_MIN
-
-X_MIN = -180 * 3/2 * sqrt(1/3)
-X_MAX = 180 * 3/2 * sqrt(1/3)
-
-X_RANGE = X_MAX - X_MIN
-
 ELEVATION_MIN = -8000
 ELEVATION_MAX = 8000
 
 ELEVATION_RANGE = ELEVATION_MAX - ELEVATION_MIN
+
+
+
 
 def get_elevation(lat, lon):
     lat_data = round((lat+90)/180*DATA_LAT_RESOLUTION)
@@ -54,34 +38,58 @@ def cylindrical(x, y):
     lon = x
     return lat, lon
 
-for chunk_x in range(PICTURE_X_CHUNKS):
-    for chunk_y in range(PICTURE_Y_CHUNKS):
-        print("Rendering chunk {},{}".format(chunk_x, chunk_y))
+def pixel_chunk_mode(x_resolution_per_chunk, y_resolution_per_chunk,
+                        x_chunk_count, y_chunk_count):
 
-        map_image = Image.new("RGB", (PICTURE_X_RESOLUTION_PER_CHUNK, PICTURE_Y_RESOLUTION_PER_CHUNK))
-        draw = ImageDraw.Draw(map_image)
+    PICTURE_X_RESOLUTION_PER_CHUNK = x_resolution_per_chunk
+    PICTURE_Y_RESOLUTION_PER_CHUNK = y_resolution_per_chunk
+    PICTURE_X_CHUNKS = x_chunk_count
+    PICTURE_Y_CHUNKS = y_chunk_count
+    PICTURE_X_RESOLUTION = x_chunk_count * x_resolution_per_chunk
+    PICTURE_Y_RESOLUTION = y_chunk_count * y_resolution_per_chunk
 
-        for x in range(PICTURE_X_RESOLUTION_PER_CHUNK):
-            for y in range(PICTURE_Y_RESOLUTION_PER_CHUNK):
+    Y_MIN = -90
+    Y_MAX = 90
 
-                #chunk coordinates to full picture coordinates
-                real_x = chunk_x*PICTURE_X_RESOLUTION_PER_CHUNK + x
-                real_y = chunk_y*PICTURE_Y_RESOLUTION_PER_CHUNK + y
+    Y_RANGE = Y_MAX - Y_MIN
 
-                #picture coordinates to model coordinates
-                i = X_MIN + real_x/(PICTURE_X_RESOLUTION-1)*X_RANGE
-                j = Y_MIN + real_y/(PICTURE_Y_RESOLUTION-1)*Y_RANGE
-                try:
-                    #model pixel to earth coordinates
-                    lat,lon = kavrayskiy_VII(i,j)
-                    #lat,lon = cylindrical(i,j)
-                    #earth coordinates to elevation
-                    elev = get_elevation(lat,lon)
-                except ValueError:
-                    elev = ELEVATION_MIN
-                #elevation to picture color value
-                elev_color = int((elev - ELEVATION_MIN)/ELEVATION_RANGE*255)
-                #draw it
-                #print("picture {:3d},{:3d}\tcoordinates {: 4.3f},{: 4.3f}\televation {:5d}\telev color {:3d}".format(x,y,lat,lon,elev,elev_color))
-                draw.point((x,y), (elev_color, elev_color, elev_color))
-        map_image.save("map_{}_{}.png".format(chunk_x, chunk_y))
+    X_MIN = -180 * 3/2 * sqrt(1/3)
+    X_MAX = 180 * 3/2 * sqrt(1/3)
+
+    X_RANGE = X_MAX - X_MIN
+
+    for chunk_x in range(PICTURE_X_CHUNKS):
+        for chunk_y in range(PICTURE_Y_CHUNKS):
+            print("Rendering chunk {},{}".format(chunk_x, chunk_y))
+
+            map_image = Image.new("RGB", (PICTURE_X_RESOLUTION_PER_CHUNK, PICTURE_Y_RESOLUTION_PER_CHUNK))
+            draw = ImageDraw.Draw(map_image)
+
+            for x in range(PICTURE_X_RESOLUTION_PER_CHUNK):
+                for y in range(PICTURE_Y_RESOLUTION_PER_CHUNK):
+
+                    #chunk coordinates to full picture coordinates
+                    real_x = chunk_x*PICTURE_X_RESOLUTION_PER_CHUNK + x
+                    real_y = chunk_y*PICTURE_Y_RESOLUTION_PER_CHUNK + y
+
+                    #picture coordinates to model coordinates
+                    i = X_MIN + real_x/(PICTURE_X_RESOLUTION-1)*X_RANGE
+                    j = Y_MIN + real_y/(PICTURE_Y_RESOLUTION-1)*Y_RANGE
+                    try:
+                        #model pixel to earth coordinates
+                        lat,lon = kavrayskiy_VII(i,j)
+                        #lat,lon = cylindrical(i,j)
+                        #earth coordinates to elevation
+                        elev = get_elevation(lat,lon)
+                    except ValueError:
+                        elev = ELEVATION_MIN
+                    #elevation to picture color value
+                    elev_color = int((elev - ELEVATION_MIN)/ELEVATION_RANGE*255)
+                    #draw it
+                    #print("picture {:3d},{:3d}\tcoordinates {: 4.3f},{: 4.3f}\televation {:5d}\telev color {:3d}".format(x,y,lat,lon,elev,elev_color))
+                    draw.point((x,y), (elev_color, elev_color, elev_color))
+            map_image.save("map_{}_{}.png".format(chunk_x, chunk_y))
+
+if __name__ == "__main__":
+
+    pixel_chunk_mode(100,50,2,2)
