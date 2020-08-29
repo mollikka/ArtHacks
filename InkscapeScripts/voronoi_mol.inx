@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<inkscape-extension xmlns="http://www.inkscape.org/namespace/inkscape/extension">
+  <_name>MOL_ Voronoi Diagram</_name>
+  <id>rhs.mol_voronoi</id>
+  <dependency type="executable" location="extensions">voronoi_mol.py</dependency>
+  <dependency type="executable" location="extensions">inkex.py</dependency>
+  <dependency type="executable" location="extensions">voronoi.py</dependency>
+  <param name="tab" type="notebook">
+    <page name="options" _gui-text="Options">
+      <param name="diagram-type" type="enum" _gui-text="Type of diagram:">
+        <_item value="Voronoi">Voronoi Diagram</_item>
+        <_item value="Delaunay">Delaunay Triangulation</_item>
+      </param>
+      <param name="break-into-triangles" type="boolean" _gui-text="Break Voronoi cells into triangles"></param>
+    </page>
+    <page name="help" _gui-text="Help">
+      <_param name="help_text" type="description">Select a set of objects. Their centroids will be used as the sites of the Voronoi diagram. Text objects are not handled.</_param>
+    </page>
+  </param>
+  <effect>
+    <object-type>all</object-type>
+    <effects-menu>
+	    <submenu _name="Mol">
+		    <submenu _name="Somewhat valuable"/>
+	    </submenu>
+    </effects-menu>
+  </effect>
+  <script>
+    <command reldir="extensions" interpreter="python">voronoi_mol.py</command>
+  </script>
+</inkscape-extension>

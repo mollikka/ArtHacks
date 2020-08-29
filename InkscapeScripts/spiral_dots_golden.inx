@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<inkscape-extension xmlns="http://www.inkscape.org/namespace/inkscape/extension">
+	<_name>MOL_ Spiral dots golden</_name>
+	<id>rhs.spiraldotsgolden</id>
+	<dependency type="executable" location="extensions">spiral_dots_golden.py</dependency>
+    <effect needs-live-preview="false">
+        <object-type>all</object-type>
+        <effects-menu>
+		<submenu _name="Mol">
+			<submenu _name="Somewhat valuable"/>
+		</submenu>
+        </effects-menu>
+    </effect>
+    <script>
+    	<command reldir="extensions" interpreter="python">spiral_dots_golden.py</command>
+    </script>
+</inkscape-extension>
+

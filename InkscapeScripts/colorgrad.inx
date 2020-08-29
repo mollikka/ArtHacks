@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<inkscape-extension xmlns="http://www.inkscape.org/namespace/inkscape/extension">
+	<_name>MOL_ Color gradient</_name>
+	<id>rhs.mol.colorgrad</id>
+	<dependency type="executable" location="extensions">colorgrad.py</dependency>
+    <param name="color_white" type="color" _gui-text="Light color">#ffffff</param>
+    <param name="color_black" type="color" _gui-text="Dark color">#000000</param>
+    <effect needs-live-preview="false">
+        <object-type>all</object-type>
+        <effects-menu>
+		<submenu _name="Mol">
+			<submenu _name="Somewhat valuable"/>
+		</submenu>
+        </effects-menu>
+    </effect>
+    <script>
+    	<command reldir="extensions" interpreter="python">colorgrad.py</command>
+    </script>
+</inkscape-extension>
+
